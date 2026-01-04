@@ -21,7 +21,7 @@ const Feed = () => {
     const fetchPosts = async () => {
       try {
         const response = await axios.get(
-          `https://scrapping-backend-bls2.onrender.com/api/v1/posts/${username}`
+          `https://scrapping-backend-i9hu.onrender.com/api/v1/posts/${username}`
         );
         
         console.log('Feed response:', response.data);

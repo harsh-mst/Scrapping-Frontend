@@ -32,7 +32,7 @@ const ScrapeUser = () => {
 
     try {
       const response = await axios.post(
-        `https://scrapping-backend-bls2.onrender.com/api/v1/scrape`,
+        `https://scrapping-backend-i9hu.onrender.com/api/v1/scrape`,
         { email, password }
       );
 
