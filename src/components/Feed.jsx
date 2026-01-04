@@ -22,8 +22,9 @@ const Feed = () => {
       try {
         const response = await axios.get(
           // `http://localhost:5000/api/v1/posts/${username}`,
+          `https://cotyledonous-lenny-overslavish.ngrok-free.dev/api/v1/posts/${username}`,
           // `https://scrapping-backend-i9hu.onrender.com/api/v1/posts/${username}`
-          `https://scrapping-backend-ykua.onrender.com/api/v1/posts/${username}`,
+          // `https://scrapping-backend-ykua.onrender.com/api/v1/posts/${username}`,
         );
         
         console.log('Feed response:', response.data);
