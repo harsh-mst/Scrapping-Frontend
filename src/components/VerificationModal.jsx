@@ -20,8 +20,8 @@ const VerificationModal = ({ email, password, onSuccess, onCancel }) => {
 
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/v1/submit-verification`,
-        // `https://scrapping-backend-i9hu.onrender.com/api/v1/submit-verification`,
+        // `http://localhost:5000/api/v1/submit-verification`,
+        `https://scrapping-backend-i9hu.onrender.com/api/v1/submit-verification`,
         {
           email,
           password,

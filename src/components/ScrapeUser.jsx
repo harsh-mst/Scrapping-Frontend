@@ -34,8 +34,8 @@ const ScrapeUser = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/v1/scrape`,
-        // `https://scrapping-backend-i9hu.onrender.com/api/v1/scrape`,
+        // `http://localhost:5000/api/v1/scrape`,
+        `https://scrapping-backend-i9hu.onrender.com/api/v1/scrape`,
         { email, password }
       );
 
