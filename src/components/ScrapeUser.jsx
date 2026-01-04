@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./ScrapeUser.css";
+import VerificationModal from "./VerificationModal";
 
 const ScrapeUser = () => {
   const [email, setEmail] = useState("");
@@ -9,6 +10,7 @@ const ScrapeUser = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [showVerification, setShowVerification] = useState(false);
   const navigate = useNavigate();
 
   const handleScrape = async (e) => {
@@ -32,11 +34,20 @@ const ScrapeUser = () => {
 
     try {
       const response = await axios.post(
-        `https://scrapping-backend-i9hu.onrender.com/api/v1/scrape`,
+        `http://localhost:5000/api/v1/scrape`,
+        // `https://scrapping-backend-i9hu.onrender.com/api/v1/scrape`,
         { email, password }
       );
 
       if (response.data.success) {
+        // Check if verification is required (202 status)
+        if (response.data.statusCode === 202 && response.data.data?.verificationRequired) {
+          console.log('Verification required, showing modal...');
+          setLoading(false);
+          setShowVerification(true);
+          return;
+        }
+
         // Based on "Available data: statusCode, data, message, success"
         // The actual user data is nested inside response.data.data
         const userData = response.data.data || {};
@@ -77,6 +88,27 @@ const ScrapeUser = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleVerificationSuccess = (userData) => {
+    setShowVerification(false);
+    const postsScraped = userData.postsScraped || 0;
+    setSuccess(`Successfully scraped ${postsScraped} posts`);
+    
+    const scrapedUsername = userData.username;
+    
+    setTimeout(() => {
+      if (scrapedUsername) {
+        navigate(`/feed/${scrapedUsername}`);
+      } else {
+        setSuccess("Scraping complete. Please check your feed.");
+      }
+    }, 2000);
+  };
+
+  const handleVerificationCancel = () => {
+    setShowVerification(false);
+    setError("Verification cancelled. Please try again.");
   };
 
   return (
@@ -143,6 +175,15 @@ const ScrapeUser = () => {
           </div>
         )}
       </div>
+
+      {showVerification && (
+        <VerificationModal
+          email={email}
+          password={password}
+          onSuccess={handleVerificationSuccess}
+          onCancel={handleVerificationCancel}
+        />
+      )}
     </div>
   );
 };
