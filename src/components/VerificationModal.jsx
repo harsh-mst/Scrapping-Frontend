@@ -19,9 +19,12 @@ const VerificationModal = ({ email, password, onSuccess, onCancel }) => {
     setError(null);
 
     try {
+      console.log('Submitting verification code:', { email, code: otp });
+      
       const response = await axios.post(
         // `http://localhost:5000/api/v1/submit-verification`,
-        `https://scrapping-backend-i9hu.onrender.com/api/v1/submit-verification`,
+        // `https://scrapping-backend-i9hu.onrender.com/api/v1/submit-verification`,
+        `https://scrapping-backend-ykua.onrender.com/api/v1/submit-verification`,
         {
           email,
           password,
@@ -29,11 +32,19 @@ const VerificationModal = ({ email, password, onSuccess, onCancel }) => {
         }
       );
 
+      console.log('Verification response:', response.data);
+
       if (response.data.success) {
         const userData = response.data.data || {};
         onSuccess(userData);
+      } else {
+        // Backend returned success: false
+        setError(response.data.message || "Verification failed. Please try again.");
       }
     } catch (err) {
+      console.error('Verification error:', err);
+      console.error('Error response:', err.response?.data);
+      
       if (err.response) {
         setError(
           err.response.data?.message ||
