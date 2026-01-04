@@ -30,6 +30,11 @@ const VerificationModal = ({ email, password, onSuccess, onCancel }) => {
           email,
           password,
           code: otp,
+        },
+        {
+          headers: {
+            'ngrok-skip-browser-warning': 'true'
+          }
         }
       );
 

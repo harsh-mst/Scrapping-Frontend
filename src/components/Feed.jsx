@@ -25,6 +25,11 @@ const Feed = () => {
           `https://cotyledonous-lenny-overslavish.ngrok-free.dev/api/v1/posts/${username}`,
           // `https://scrapping-backend-i9hu.onrender.com/api/v1/posts/${username}`
           // `https://scrapping-backend-ykua.onrender.com/api/v1/posts/${username}`,
+          {
+            headers: {
+              'ngrok-skip-browser-warning': 'true'
+            }
+          }
         );
         
         console.log('Feed response:', response.data);
@@ -37,19 +42,29 @@ const Feed = () => {
         // 4. Double wrapped: { data: { posts: [ ... ] } }  <-- consistently used in ScrapeUser
         let postsData = [];
         
+        console.log('Checking response.data.data:', response.data.data);
+        console.log('Is response.data.data.posts an array?', Array.isArray(response.data.data?.posts));
+        
         if (response.data.data && Array.isArray(response.data.data.posts)) {
             // Case: { statusCode: 200, data: { posts: [...] }, ... }
+            console.log('✅ Found posts at response.data.data.posts');
             postsData = response.data.data.posts;
         } else if (Array.isArray(response.data.posts)) {
              // Case: { posts: [...] }
+             console.log('✅ Found posts at response.data.posts');
              postsData = response.data.posts;
         } else if (Array.isArray(response.data.data)) {
             // Case: { data: [...] }
+            console.log('✅ Found posts at response.data.data');
             postsData = response.data.data;
         } else if (Array.isArray(response.data)) {
             // Case: [...]
+            console.log('✅ Found posts at response.data');
             postsData = response.data;
         }
+
+        console.log('Extracted postsData:', postsData);
+        console.log('postsData length:', postsData?.length);
 
         if (!postsData || !Array.isArray(postsData)) {
            console.warn('Could not find posts array in response:', response.data);
