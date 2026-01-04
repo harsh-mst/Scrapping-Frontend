@@ -37,29 +37,25 @@ const Feed = () => {
         // 4. Double wrapped: { data: { posts: [ ... ] } }  <-- consistently used in ScrapeUser
         let postsData = [];
         
-        if (Array.isArray(response.data)) {
-            postsData = response.data;
-        } else if (Array.isArray(response.data.data)) {
-            postsData = response.data.data;
-        } else if (Array.isArray(response.data.posts)) {
-            postsData = response.data.posts;
-        } else if (response.data.data && Array.isArray(response.data.data.posts)) {
+        if (response.data.data && Array.isArray(response.data.data.posts)) {
+            // Case: { statusCode: 200, data: { posts: [...] }, ... }
             postsData = response.data.data.posts;
+        } else if (Array.isArray(response.data.posts)) {
+             // Case: { posts: [...] }
+             postsData = response.data.posts;
+        } else if (Array.isArray(response.data.data)) {
+            // Case: { data: [...] }
+            postsData = response.data.data;
+        } else if (Array.isArray(response.data)) {
+            // Case: [...]
+            postsData = response.data;
         }
 
-        if (!postsData || !Array.isArray(postsData) || postsData.length === 0) {
-           // It's possible we just didn't find them, or the array is empty.
-           // If we found nothing that looks like an array, we should warn, 
-           // but an empty array is valid (no posts).
-           
-           // If we really couldn't find an array, checking keys helps debugging
-           const availableData = response.data.data || response.data;
-           const keys = typeof availableData === 'object' ? Object.keys(availableData).join(', ') : 'not an object';
-           
-           if (!Array.isArray(postsData)) {
-               console.error('Expected array of posts but got:', typeof postsData);
-               throw new Error(`Invalid data format. keys found: ${keys}`);
-           }
+        if (!postsData || !Array.isArray(postsData)) {
+           console.warn('Could not find posts array in response:', response.data);
+           // Default to empty array if not found, rather than throwing error immediately
+           // unless strictly necessary.
+           postsData = [];
         }
         
         const sortedPosts = postsData.sort(
