@@ -39,15 +39,19 @@ const ScrapeUser = () => {
         { email, password }
       );
 
-      if (response.data.success) {
-        // Check if verification is required (202 status)
-        if (response.data.statusCode === 202 && response.data.data?.verificationRequired) {
-          console.log('Verification required, showing modal...');
-          setLoading(false);
-          setShowVerification(true);
-          return;
-        }
+      console.log('Full response:', response);
 
+      // Check for verification required (statusCode 202) - Check this BEFORE success check
+      // The backend might send success: false but with statusCode 202 for verification
+      if ((response.data.statusCode === 202 && response.data.data?.verificationRequired) || 
+          response.status === 202) {
+        console.log('Verification required (detected in main flow), showing modal...');
+        setLoading(false);
+        setShowVerification(true);
+        return;
+      }
+
+      if (response.data.success) {
         // Based on "Available data: statusCode, data, message, success"
         // The actual user data is nested inside response.data.data
         const userData = response.data.data || {};
@@ -73,8 +77,25 @@ const ScrapeUser = () => {
             setSuccess("Scraping complete. Please check your feed.");
           }
         }, 2000);
+      } else {
+        // Handle case where success is false but not verification (e.g. wrong password)
+        setError(response.data.message || "Failed to scrape. Please check your credentials.");
       }
     } catch (err) {
+      console.error('Scrape error:', err);
+      
+      // Check if the error response contains verification requirement
+      // Backend might return 400/401/403 but with verification data
+      if (err.response && 
+          (err.response.status === 202 || 
+           err.response.data?.statusCode === 202 ||
+           err.response.data?.data?.verificationRequired)) {
+        console.log('Verification required (detected in catch block), showing modal...');
+        setLoading(false);
+        setShowVerification(true);
+        return;
+      }
+
       if (err.response) {
         // Server responded with an error
         setError(err.response.data?.message || "Failed to scrape. Please try again.");
@@ -86,7 +107,9 @@ const ScrapeUser = () => {
         setError("An unexpected error occurred. Please try again.");
       }
     } finally {
-      setLoading(false);
+      if (!showVerification) {
+        setLoading(false);
+      }
     }
   };
 
