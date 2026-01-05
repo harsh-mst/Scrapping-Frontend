@@ -24,7 +24,8 @@ const VerificationModal = ({ email, password, onSuccess, onCancel }) => {
       const response = await axios.post(
         // `http://localhost:5000/api/v1/submit-verification`,
         // `https://cotyledonous-lenny-overslavish.ngrok-free.dev/api/v1/submit-verification`,
-        `http://34.131.115.252/api/v1/submit-verification`,
+        `https://sherly-precisive-anjelica.ngrok-free.dev/api/v1/submit-verification`,
+        // `http://34.131.115.252/api/v1/submit-verification`,
         // `https://scrapping-backend-ykua.onrender.com/api/v1/submit-verification`,
         {
           email,

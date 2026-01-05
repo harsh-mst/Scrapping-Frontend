@@ -23,7 +23,8 @@ const Feed = () => {
         const response = await axios.get(
           // `http://localhost:5000/api/v1/posts/${username}`,
           // `https://cotyledonous-lenny-overslavish.ngrok-free.dev/api/v1/posts/${username}`,
-          `http://34.131.115.252/api/v1/posts/${username}`,
+          `https://sherly-precisive-anjelica.ngrok-free.dev/api/v1/posts/${username}`,
+          // `http://34.131.115.252/api/v1/posts/${username}`,
           // `https://scrapping-backend-ykua.onrender.com/api/v1/posts/${username}`,
           {
             headers: {
